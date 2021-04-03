@@ -11,8 +11,9 @@
 ###############################
 
 ######################
-# modules importés: tkinter
+# modules importés: tkinter, random
 import tkinter as tk
+import random
 
 #####################
 # Constantes
@@ -23,10 +24,9 @@ import tkinter as tk
 # position initiale du serpent
 serpent = [[1, 2], [1, 1], [2, 1]]
 
-print(serpent[1:])
-
 # direction initiale du serpent
 direction = [0, 1]
+
 
 # direction: haut,       droite
 #             [-1, 0]     [0 , 1]
@@ -38,6 +38,26 @@ direction = [0, 1]
 
 #####################
 # Fonctions principales
+
+def creation_fruit(nzone, mzone):
+    '''creation d'un fruit a une position aleatoire'''
+    global serpent, nmur, mmur
+
+    # on verifie que le serpent n'est pas a cette position
+    t = True
+
+    while t:
+
+        c, d = random.randint(1, nzone), random.randint(1, mzone)
+
+        t = False
+        for element in serpent:
+            if element == [c, d]:
+                t = True
+
+    print(t)
+
+    return [c, d]
 
 
 def game_loose():
@@ -84,7 +104,9 @@ def move(fleche):
 
 def quadrillage(n, m):
     '''creer un tableau de dimension n*m'''
-    global nmur, mmur
+    global nmur, mmur, fruit
+
+    fruit = creation_fruit(n - 2, m - 2)
 
     nmur = n - 1
     mmur = m - 1
@@ -99,6 +121,9 @@ def quadrillage(n, m):
             for element in serpent:
                 if element == [i, a]:
                     k = 3
+
+            if [i, a] == fruit:
+                k = 5
 
             if k != 3:
                 if i in [0, n-1] or a in [0, m-1]:
@@ -120,6 +145,8 @@ def afficher_tableau(tableau):
 ####################
 # Programme principale
 tableau = quadrillage(5, 5)
+
+print(fruit)
 
 afficher_tableau(tableau)
 
