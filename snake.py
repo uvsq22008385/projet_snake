@@ -14,6 +14,7 @@
 # modules importés: tkinter, random
 import tkinter as tk
 import random
+import copy
 
 #####################
 # Constantes
@@ -36,12 +37,23 @@ direction = [0, 1]
 # note: on remonte en negatif
 
 
+score = 0
+
+
 #####################
 # Fonctions principales
 
+def affichage_score():
+    global score
+
+    score += 1
+
+    print("score:", score)
+
+
 def creation_fruit(nzone, mzone):
     '''creation d'un fruit a une position aleatoire'''
-    global serpent, nmur, mmur
+    global serpent
 
     # on verifie que le serpent n'est pas a cette position
     t = True
@@ -55,8 +67,6 @@ def creation_fruit(nzone, mzone):
             if element == [c, d]:
                 t = True
 
-    print(t)
-
     return [c, d]
 
 
@@ -66,31 +76,41 @@ def game_loose():
 
 def move(fleche):
     '''deplace le serpent sur la tableau'''
-    global direction, serpent, tableau, nmur, mmur
+    global direction, serpent, tableau, nmur, mmur, fruit
 
     if [direction[0] + fleche[0], direction[1] + fleche[1]] == [0, 0]:
         pass
-        print("on ne fait rien")
         # on ne fait rien
     else:
 
         direction = fleche
 
-        ###
-
-        a = serpent[-1][0]
-        b = serpent[-1][1]
-
-        # l'anciene position de la queue du serpent redevient du terrain
-        tableau[a][b] = 1
-
-        # on decale la position de chaque partie du serpent
-        # le corps prend la place de la tête et ainsi de suite
-        serpent[1:] = serpent[:-1]
-
         A, B = serpent[0][0] + fleche[0], serpent[0][1] + fleche[1]
 
-        serpent[0] = [A, B]
+        for element in serpent:
+            if element == [A, B]:
+                game_loose()
+
+        if fruit == [A, B]:
+            # si on touche le fruit
+            serpent[1:] = copy.deepcopy(serpent)
+            serpent[0] = copy.deepcopy([A, B])
+
+            affichage_score()
+
+            fruit = creation_fruit(nmur-1, mmur-1)
+            tableau[fruit[0]][fruit[1]] = 5
+
+        else:
+            a = serpent[-1][0]
+            b = serpent[-1][1]
+
+            serpent[1:] = copy.deepcopy(serpent[:-1])
+
+            # l'anciene position de la queue du serpent redevient du terrain
+            tableau[a][b] = 1
+
+            serpent[0] = copy.deepcopy([A, B])
 
         if tableau[A][B] == 0:
             game_loose()
@@ -98,8 +118,6 @@ def move(fleche):
             tableau[A][B] = 3
 
     afficher_tableau(tableau)
-
-    print('ù******************')
 
 
 def quadrillage(n, m):
@@ -146,7 +164,6 @@ def afficher_tableau(tableau):
 # Programme principale
 tableau = quadrillage(5, 5)
 
-print(fruit)
 
 afficher_tableau(tableau)
 
