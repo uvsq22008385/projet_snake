@@ -43,6 +43,13 @@ score = 0
 #####################
 # Fonctions principales
 
+
+def mouvement_automatique():
+    global direction
+    move(direction)
+    racine.after(1000, lambda: mouvement_automatique())
+
+
 def affichage_score():
     global score
 
@@ -162,12 +169,14 @@ def afficher_tableau(tableau):
 
 ####################
 # Programme principale
-tableau = quadrillage(5, 5)
+tableau = quadrillage(10, 10)
 
 
 afficher_tableau(tableau)
 
 racine = tk.Tk()
+
+mouvement_automatique()
 
 haut = tk.Button(racine, text="^", command=lambda: move([-1, 0])).grid()
 droite = tk.Button(racine, text=">", command=lambda: move([0, 1])).grid()
