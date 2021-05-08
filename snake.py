@@ -39,15 +39,30 @@ direction = [0, 1]
 
 score = 0
 
+game = False
+
 
 #####################
 # Fonctions principales
 
+def pause():
+    global game
+
+    if game:
+        game = False
+        bouton.configure(text="démarrer")
+    else:
+        game = True
+        bouton.configure(text="arrêter")
+        racine.after(3000, lambda: mouvement_automatique())
+        
+    
 
 def mouvement_automatique():
-    global direction
-    move(direction)
-    racine.after(3000, lambda: mouvement_automatique())
+    global direction, game
+    if game:
+        move(direction)
+        racine.after(3000, lambda: mouvement_automatique())
 
 
 def affichage_score():
@@ -87,54 +102,56 @@ def game_loose():
 
 def move(fleche):
     '''deplace le serpent sur la tableau'''
-    global direction, serpent, tableau, dessin, nmur, mmur, fruit
+    global direction, serpent, tableau, dessin, nmur, mmur, fruit, game
 
-    if [direction[0] + fleche[0], direction[1] + fleche[1]] == [0, 0]:
-        pass
-        # on ne fait rien
-    else:
+    if game:
 
-        direction = fleche
+        if [direction[0] + fleche[0], direction[1] + fleche[1]] == [0, 0]:
+            pass
+            # on ne fait rien
+        else:
 
-        A, B = serpent[0][0] + fleche[0], serpent[0][1] + fleche[1]
+            direction = fleche
 
-        for element in serpent:
-            if element == [A, B]:
+            A, B = serpent[0][0] + fleche[0], serpent[0][1] + fleche[1]
+
+            for element in serpent:
+                if element == [A, B]:
+                    game_loose()
+
+            if fruit == [A, B]:
+                # si on touche le fruit
+                serpent[1:] = copy.deepcopy(serpent)
+                serpent[0] = copy.deepcopy([A, B])
+
+                affichage_score()
+
+                fruit = creation_fruit(nmur-1, mmur-1)
+                tableau[fruit[0]][fruit[1]] = 5
+
+                canvas.itemconfigure(dessin[fruit[0]][fruit[1]], fill="yellow")
+
+            else:
+                a = serpent[-1][0]
+                b = serpent[-1][1]
+
+                serpent[1:] = copy.deepcopy(serpent[:-1])
+
+                # l'anciene position de la queue du serpent redevient du terrain
+                tableau[a][b] = 1
+
+                canvas.itemconfigure(dessin[a][b], fill="pink")
+
+                serpent[0] = copy.deepcopy([A, B])
+
+            if tableau[A][B] == 0:
                 game_loose()
+            else:
+                tableau[A][B] = 3
 
-        if fruit == [A, B]:
-            # si on touche le fruit
-            serpent[1:] = copy.deepcopy(serpent)
-            serpent[0] = copy.deepcopy([A, B])
+                canvas.itemconfigure(dessin[A][B], fill="red")
 
-            affichage_score()
-
-            fruit = creation_fruit(nmur-1, mmur-1)
-            tableau[fruit[0]][fruit[1]] = 5
-
-            canvas.itemconfigure(dessin[fruit[0]][fruit[1]], fill="yellow")
-
-        else:
-            a = serpent[-1][0]
-            b = serpent[-1][1]
-
-            serpent[1:] = copy.deepcopy(serpent[:-1])
-
-            # l'anciene position de la queue du serpent redevient du terrain
-            tableau[a][b] = 1
-
-            canvas.itemconfigure(dessin[a][b], fill="pink")
-
-            serpent[0] = copy.deepcopy([A, B])
-
-        if tableau[A][B] == 0:
-            game_loose()
-        else:
-            tableau[A][B] = 3
-
-            canvas.itemconfigure(dessin[A][B], fill="red")
-
-    afficher_tableau(tableau)
+        afficher_tableau(tableau)
 
 
 def quadrillage(n, m):
@@ -215,8 +232,9 @@ tableau, dessin = quadrillage(10, 10)
 
 afficher_tableau(tableau)
 
+bouton = tk.Button(racine, text="démarrer", command=lambda:pause())
+bouton.grid()
 
-mouvement_automatique()
 
 haut = tk.Button(racine, text="^", command=lambda: move([-1, 0])).grid()
 droite = tk.Button(racine, text=">", command=lambda: move([0, 1])).grid()
