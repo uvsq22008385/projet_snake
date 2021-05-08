@@ -96,12 +96,27 @@ def creation_fruit(nzone, mzone):
 
 
 def game_loose():
-    global game
-    game = False
+    global serpent, direction, score, game, tableau, dessin
+
     bouton.configure(text="recommencer")
     label.configure(text="Vous avez perdu, votre score est:"+str(score))
 
     # variable a reset
+
+    serpent = [[1, 2], [1, 1], [2, 1]]
+
+    direction = [0, 1]
+
+    score = 0
+
+    game = False
+
+    tableau = []
+    dessin = []
+
+    canvas.delete("all")
+
+    tableau, dessin = quadrillage(10, 10)
 
 
 def move(fleche):
