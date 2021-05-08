@@ -54,13 +54,13 @@ def pause():
     else:
         game = True
         bouton.configure(text="arrêter")
-        racine.after(3000, lambda: mouvement_automatique())
+        racine.after(1500, lambda: mouvement_automatique())
 
 
 def mouvement_automatique():
-    global direction, game
+    global game
     if game:
-        move(direction)
+        move()
         racine.after(500, lambda: mouvement_automatique())
 
 
@@ -119,56 +119,58 @@ def game_loose():
     tableau, dessin = quadrillage(10, 10)
 
 
-def move(fleche):
+def changementDirection(fleche):
+    '''change la direction dans laquelle se déplace le snake
+    sauf s'il c'est dans la direction opposée'''
+    global direction
+    if game:
+        if [direction[0] + fleche[0], direction[1] + fleche[1]] != [0, 0]:
+            direction = fleche
+
+
+def move():
     '''deplace le serpent sur la tableau'''
     global direction, serpent, tableau, dessin, nmur, mmur, fruit, game
 
     if game:
 
-        if [direction[0] + fleche[0], direction[1] + fleche[1]] == [0, 0]:
-            pass
-            # on ne fait rien
-        else:
+        A, B = serpent[0][0] + direction[0], serpent[0][1] + direction[1]
 
-            direction = fleche
-
-            A, B = serpent[0][0] + fleche[0], serpent[0][1] + fleche[1]
-
-            for element in serpent:
-                if element == [A, B]:
-                    game_loose()
-
-            if fruit == [A, B]:
-                # si on touche le fruit
-                serpent[1:] = copy.deepcopy(serpent)
-                serpent[0] = copy.deepcopy([A, B])
-
-                affichage_score()
-
-                fruit = creation_fruit(nmur-1, mmur-1)
-                tableau[fruit[0]][fruit[1]] = 5
-
-                canvas.itemconfigure(dessin[fruit[0]][fruit[1]], fill="yellow")
-
-            else:
-                a = serpent[-1][0]
-                b = serpent[-1][1]
-
-                serpent[1:] = copy.deepcopy(serpent[:-1])
-
-                # l'anciene position de la queue du serpent redevient du terrain
-                tableau[a][b] = 1
-
-                canvas.itemconfigure(dessin[a][b], fill="pink")
-
-                serpent[0] = copy.deepcopy([A, B])
-
-            if tableau[A][B] == 0:
+        for element in serpent:
+            if element == [A, B]:
                 game_loose()
-            else:
-                tableau[A][B] = 3
 
-                canvas.itemconfigure(dessin[A][B], fill="red")
+        if fruit == [A, B]:
+            # si on touche le fruit
+            serpent[1:] = copy.deepcopy(serpent)
+            serpent[0] = copy.deepcopy([A, B])
+
+            affichage_score()
+
+            fruit = creation_fruit(nmur-1, mmur-1)
+            tableau[fruit[0]][fruit[1]] = 5
+
+            canvas.itemconfigure(dessin[fruit[0]][fruit[1]], fill="yellow")
+
+        else:
+            a = serpent[-1][0]
+            b = serpent[-1][1]
+
+            serpent[1:] = copy.deepcopy(serpent[:-1])
+
+            # l'anciene position de la queue du serpent redevient du terrain
+            tableau[a][b] = 1
+
+            canvas.itemconfigure(dessin[a][b], fill="pink")
+
+            serpent[0] = copy.deepcopy([A, B])
+
+        if tableau[A][B] == 0:
+            game_loose()
+        else:
+            tableau[A][B] = 3
+
+            canvas.itemconfigure(dessin[A][B], fill="red")
 
         afficher_tableau(tableau)
 
@@ -260,9 +262,9 @@ droite = tk.Button(racine, text=">", command=lambda: move([0, 1])).grid()
 bas = tk.Button(racine, text="v", command=lambda: move([1, 0])).grid()
 gauche = tk.Button(racine, text="<", command=lambda: move([0, -1])).grid()
 
-racine.bind("<Up>", lambda event: move([-1, 0]))
-racine.bind("<Right>", lambda event: move([0, 1]))
-racine.bind("<Down>", lambda event: move([1, 0]))
-racine.bind("<Left>", lambda event: move([0, -1]))
+racine.bind("<Up>", lambda event: changementDirection([-1, 0]))
+racine.bind("<Right>", lambda event: changementDirection([0, 1]))
+racine.bind("<Down>", lambda event: changementDirection([1, 0]))
+racine.bind("<Left>", lambda event: changementDirection([0, -1]))
 
 racine.mainloop()
