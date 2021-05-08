@@ -55,8 +55,7 @@ def pause():
         game = True
         bouton.configure(text="arrêter")
         racine.after(3000, lambda: mouvement_automatique())
-        
-    
+
 
 def mouvement_automatique():
     global direction, game
@@ -97,7 +96,12 @@ def creation_fruit(nzone, mzone):
 
 
 def game_loose():
-    print("game over")
+    global game
+    game = False
+    bouton.configure(text="recommencer")
+    label.configure(text="Vous avez perdu, votre score est:"+str(score))
+
+    # variable a reset
 
 
 def move(fleche):
@@ -232,7 +236,7 @@ tableau, dessin = quadrillage(10, 10)
 
 afficher_tableau(tableau)
 
-bouton = tk.Button(racine, text="démarrer", command=lambda:pause())
+bouton = tk.Button(racine, text="démarrer", command=lambda: pause())
 bouton.grid()
 
 
