@@ -41,12 +41,26 @@ score = 0
 
 game = False
 
+vitesse = 500
+
 
 #####################
 # Fonctions principales
 
+def changementVitesse(vit):
+    global vitesse
+    if not game and score == 0:
+        vitesse = vit
+        affiche = "lent"
+        if vit == 200:
+            affiche = "normal"
+        elif vit == 100:
+            affiche = "rapide"
+        quelVitesse.configure(text="vitesse:" + affiche)
+
+
 def pause():
-    global game
+    global game, speed, vitesse
 
     if game:
         game = False
@@ -58,10 +72,10 @@ def pause():
 
 
 def mouvement_automatique():
-    global game
+    global game, vitesse
     if game:
         move()
-        racine.after(500, lambda: mouvement_automatique())
+        racine.after(vitesse, lambda: mouvement_automatique())
 
 
 def affichage_score():
@@ -116,7 +130,7 @@ def game_loose():
 
     canvas.delete("all")
 
-    tableau, dessin = quadrillage(10, 10)
+    tableau, dessin = quadrillage(17, 17)
 
 
 def changementDirection(fleche):
@@ -248,7 +262,7 @@ label = tk.Label(racine, text="score:0")
 label.grid()
 
 
-tableau, dessin = quadrillage(10, 10)
+tableau, dessin = quadrillage(17, 17)
 
 
 afficher_tableau(tableau)
@@ -261,6 +275,18 @@ haut = tk.Button(racine, text="^", command=lambda: move([-1, 0])).grid()
 droite = tk.Button(racine, text=">", command=lambda: move([0, 1])).grid()
 bas = tk.Button(racine, text="v", command=lambda: move([1, 0])).grid()
 gauche = tk.Button(racine, text="<", command=lambda: move([0, -1])).grid()
+
+lent = tk.Button(racine, text="lent", command=lambda: changementVitesse(500))
+lent.grid()
+
+normal = tk.Button(racine, text="normal", command=lambda: changementVitesse(200))
+normal.grid()
+
+rapide = tk.Button(racine, text="rapide", command=lambda: changementVitesse(100))
+rapide.grid()
+
+quelVitesse = tk.Label(racine, text="le code de Salah")
+quelVitesse.grid()
 
 racine.bind("<Up>", lambda event: changementDirection([-1, 0]))
 racine.bind("<Right>", lambda event: changementDirection([0, 1]))
