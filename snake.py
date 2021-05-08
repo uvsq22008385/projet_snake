@@ -61,7 +61,7 @@ def mouvement_automatique():
     global direction, game
     if game:
         move(direction)
-        racine.after(3000, lambda: mouvement_automatique())
+        racine.after(500, lambda: mouvement_automatique())
 
 
 def affichage_score():
@@ -260,5 +260,9 @@ droite = tk.Button(racine, text=">", command=lambda: move([0, 1])).grid()
 bas = tk.Button(racine, text="v", command=lambda: move([1, 0])).grid()
 gauche = tk.Button(racine, text="<", command=lambda: move([0, -1])).grid()
 
+racine.bind("<Up>", lambda event: move([-1, 0]))
+racine.bind("<Right>", lambda event: move([0, 1]))
+racine.bind("<Down>", lambda event: move([1, 0]))
+racine.bind("<Left>", lambda event: move([0, -1]))
 
 racine.mainloop()
