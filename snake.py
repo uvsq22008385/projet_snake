@@ -41,7 +41,7 @@ score = 0
 
 game = False
 
-vitesse = 500
+vitesse = 200
 
 
 #####################
@@ -150,41 +150,48 @@ def move():
 
         A, B = serpent[0][0] + direction[0], serpent[0][1] + direction[1]
 
-        for element in serpent:
-            if element == [A, B]:
-                game_loose()
-
-        if fruit == [A, B]:
-            # si on touche le fruit
-            serpent[1:] = copy.deepcopy(serpent)
-            serpent[0] = copy.deepcopy([A, B])
-
-            affichage_score()
-
-            fruit = creation_fruit(nmur-1, mmur-1)
-            tableau[fruit[0]][fruit[1]] = 5
-
-            canvas.itemconfigure(dessin[fruit[0]][fruit[1]], fill="yellow")
-
-        else:
-            a = serpent[-1][0]
-            b = serpent[-1][1]
-
-            serpent[1:] = copy.deepcopy(serpent[:-1])
-
-            # l'anciene position de la queue du serpent redevient du terrain
-            tableau[a][b] = 1
-
-            canvas.itemconfigure(dessin[a][b], fill="pink")
-
-            serpent[0] = copy.deepcopy([A, B])
+        defaite = False
 
         if tableau[A][B] == 0:
-            game_loose()
+            defaite = True
         else:
             tableau[A][B] = 3
 
             canvas.itemconfigure(dessin[A][B], fill="red")
+
+        for element in serpent:
+            if element == [A, B]:
+                defaite = True
+                break
+
+        if defaite:
+            game_loose()
+        else:
+
+            if fruit == [A, B]:
+                # si on touche le fruit
+                serpent[1:] = copy.deepcopy(serpent)
+                serpent[0] = copy.deepcopy([A, B])
+
+                affichage_score()
+
+                fruit = creation_fruit(nmur-1, mmur-1)
+                tableau[fruit[0]][fruit[1]] = 5
+
+                canvas.itemconfigure(dessin[fruit[0]][fruit[1]], fill="yellow")
+
+            else:
+                a = serpent[-1][0]
+                b = serpent[-1][1]
+
+                serpent[1:] = copy.deepcopy(serpent[:-1])
+
+                # l'anciene position de la queue du serpent redevient du terrain
+                tableau[a][b] = 1
+
+                canvas.itemconfigure(dessin[a][b], fill="pink")
+
+                serpent[0] = copy.deepcopy([A, B])
 
         afficher_tableau(tableau)
 
