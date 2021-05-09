@@ -22,13 +22,13 @@ Documentation:
 
 Variables principales utilisés:
 
-tableau, liste à 2d contenant l'information sur le type de terrain
+tableau, liste à 2d, contenant l'information sur le type de terrain
 
-dessin, liste à 2d contenant le quadrillage representée à l'écran
+dessin, liste à 2d, contenant le quadrillage representée à l'écran
 
-serpent, liste à 2d contenant l'ensemble des coordonées du serpent
+serpent, liste à 2d, contenant l'ensemble des coordonées du serpent
 
-fruit, liste contenant les coordonnées du fruit
+fruit, liste, contenant les coordonnées du fruit
 
 direction, direction dans laquelle va le serpent
 	# direction: haut,       droite
@@ -36,3 +36,19 @@ direction, direction dans laquelle va le serpent
 	#              bas,      gauche
 	#             [1, 0]     [0 , -1]
 
+game, booléun, indiquant si le jeu est est en cours ou non
+
+vitesse, variable, définit la vitesse de déplacement du serpent
+
+Touches de contrôles:
+
+les flèches directionnelles pour se déplacer ou
+les touches visible a l'ecran
+
+Language de programmation:
+
+python
+
+Modules importés:
+
+tkinter, copy, random
