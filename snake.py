@@ -278,10 +278,10 @@ bouton = tk.Button(racine, text="démarrer", command=lambda: pause())
 bouton.grid()
 
 
-haut = tk.Button(racine, text="^", command=lambda: move([-1, 0])).grid()
-droite = tk.Button(racine, text=">", command=lambda: move([0, 1])).grid()
-bas = tk.Button(racine, text="v", command=lambda: move([1, 0])).grid()
-gauche = tk.Button(racine, text="<", command=lambda: move([0, -1])).grid()
+haut = tk.Button(racine, text="^", command=lambda: changementDirection([-1, 0])).grid()
+droite = tk.Button(racine, text=">", command=lambda: changementDirection([0, 1])).grid()
+bas = tk.Button(racine, text="v", command=lambda: changementDirection([1, 0])).grid()
+gauche = tk.Button(racine, text="<", command=lambda: changementDirection([0, -1])).grid()
 
 lent = tk.Button(racine, text="lent", command=lambda: changementVitesse(500))
 lent.grid()
