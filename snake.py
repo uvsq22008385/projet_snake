@@ -11,7 +11,7 @@
 ###############################
 
 ######################
-# modules importés: tkinter, random
+# modules importés: tkinter, random, copy
 import tkinter as tk
 import random
 import copy
@@ -28,7 +28,6 @@ serpent = [[1, 2], [1, 1], [2, 1]]
 # direction initiale du serpent
 direction = [0, 1]
 
-
 # direction: haut,       droite
 #             [-1, 0]     [0 , 1]
 #              bas,      gauche
@@ -36,10 +35,9 @@ direction = [0, 1]
 
 # note: on remonte en negatif
 
-
 score = 0
 
-game = False
+game = False  # définit si le jeu est en pause ou non
 
 vitesse = 200
 
@@ -48,6 +46,8 @@ vitesse = 200
 # Fonctions principales
 
 def changementVitesse(vit):
+    '''change la vitesse du snake quand le jeu est en arrêt
+    et que le score est de 0'''
     global vitesse
     if not game and score == 0:
         vitesse = vit
@@ -60,7 +60,8 @@ def changementVitesse(vit):
 
 
 def pause():
-    global game, speed, vitesse
+    '''permet de faire une pause dans le jeu'''
+    global game
 
     if game:
         game = False
@@ -72,13 +73,16 @@ def pause():
 
 
 def mouvement_automatique():
-    global game, vitesse
+    '''lance automatiquement le prochain mouvement du snake
+    en appelant la fonction move'''
+    global game
     if game:
         move()
         racine.after(vitesse, lambda: mouvement_automatique())
 
 
 def affichage_score():
+    '''affiche le score à l'écran'''
     global score
 
     score += 1
@@ -110,6 +114,8 @@ def creation_fruit(nzone, mzone):
 
 
 def game_loose():
+    '''arrête la partie et réinitialise le terrain lorsque
+    le joueur a perdu'''
     global serpent, direction, score, game, tableau, dessin
 
     bouton.configure(text="recommencer")
@@ -143,7 +149,8 @@ def changementDirection(fleche):
 
 
 def move():
-    '''deplace le serpent sur la tableau'''
+    '''deplace le serpent sur la tableau en verifiant s'il
+    touche le mur, lui-même ou un fruit'''
     global direction, serpent, tableau, dessin, nmur, mmur, fruit, game
 
     if game:
@@ -152,6 +159,7 @@ def move():
 
         defaite = False
 
+        # si le serpent touche le mur
         if tableau[A][B] == 0:
             defaite = True
         else:
@@ -159,6 +167,7 @@ def move():
 
             canvas.itemconfigure(dessin[A][B], fill="red")
 
+        # si le serpent se touche lui-même
         for element in serpent:
             if element == [A, B]:
                 defaite = True
@@ -169,7 +178,7 @@ def move():
         else:
 
             if fruit == [A, B]:
-                # si on touche le fruit
+                # si le serpent touche le fruit
                 serpent[1:] = copy.deepcopy(serpent)
                 serpent[0] = copy.deepcopy([A, B])
 
@@ -205,8 +214,8 @@ def quadrillage(n, m):
     nmur = n - 1
     mmur = m - 1
 
-    tableau = []
-    dessin = []
+    tableau = []  # liste à 2d contenant le type de terrain
+    dessin = []  # liste à 2d contenant les rectangles de couleur
 
     for i in range(n):
         tableau.append([])
