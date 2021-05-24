@@ -39,11 +39,57 @@ score = 0
 
 game = False  # définit si le jeu est en pause ou non
 
-vitesse = 200
+vitesse = 200  # vitesse actuelle du snake, vitesse: moyenne
 
 
 #####################
 # Fonctions principales
+def configurationBoutonScore():
+    '''affiche la valeur du meilleur score à l'écran'''
+    chose = best_score()
+    scorea.configure(text=chose)
+
+
+def read():
+    '''lis l'ensemble des scores obtenus par le joueur'''
+
+    fic_rd = open("fichier", "r")
+
+    line = [str(score)] + fic_rd.readlines()
+
+    for a in range(len(line)):
+        line[a] = line[a].replace("\n", "")
+
+    fic_rd.close()
+
+    return line
+
+
+def best_score():
+    '''recupere le meilleur score parmi les différents score du joueur'''
+    line = read()
+
+    chose = 0
+
+    for i in range(len(line)):
+        if int(line[i]) > chose:
+            chose = int(line[i])
+
+    return chose
+
+
+def write(score):
+    '''enregistre les différents score du joueur'''
+
+    line = [str(score)] + read()
+
+    fic_wr = open("fichier", "w")
+
+    for element in line:
+        fic_wr.write(element + "\n")
+
+    fic_wr.close()
+
 
 def changementVitesse(vit):
     '''change la vitesse du snake quand le jeu est en arrêt
@@ -89,8 +135,6 @@ def affichage_score():
 
     afficher = "score:" + str(score)
 
-    print(afficher)
-
     label.configure(text=afficher)
 
 
@@ -121,6 +165,10 @@ def game_loose():
     bouton.configure(text="recommencer")
     label.configure(text="Vous avez perdu, votre score est:"+str(score))
 
+    # on enregistre le score dans un fichier text
+
+    write(score)
+
     # variable a reset
 
     serpent = [[1, 2], [1, 1], [2, 1]]
@@ -134,9 +182,12 @@ def game_loose():
     tableau = []
     dessin = []
 
+    # on efface les dessins sur le canvas
     canvas.delete("all")
 
     tableau, dessin = quadrillage(17, 17)
+
+    configurationBoutonScore()
 
 
 def changementDirection(fleche):
@@ -202,7 +253,7 @@ def move():
 
                 serpent[0] = copy.deepcopy([A, B])
 
-        afficher_tableau(tableau)
+        # afficher_tableau(tableau)
 
 
 def quadrillage(n, m):
@@ -274,14 +325,16 @@ racine = tk.Tk()
 canvas = tk.Canvas(racine, width=500, height=500, bg="white")
 canvas.grid()
 
+# affiche le score actuelle
 label = tk.Label(racine, text="score:0")
 label.grid()
 
 
+# renvoie le tableau sous forme de nom et les dessins du canavas
 tableau, dessin = quadrillage(17, 17)
 
-
-afficher_tableau(tableau)
+# pour afficher le tableau de nombres dans le terminal
+# afficher_tableau(tableau)
 
 bouton = tk.Button(racine, text="démarrer", command=lambda: pause())
 bouton.grid()
@@ -301,8 +354,21 @@ normal.grid()
 rapide = tk.Button(racine, text="rapide", command=lambda: changementVitesse(100))
 rapide.grid()
 
-quelVitesse = tk.Label(racine, text="le code de Salah")
+# affichage: la vitesse actuelle
+quelVitesse = tk.Label(racine, text="vitesse:normal")
 quelVitesse.grid()
+
+
+titre = tk.Label(racine, text="Meilleur score:")
+titre.grid()
+
+# affichage: le meilleur score
+scorea = tk.Label(racine, text="")
+scorea.grid()
+
+# intialisation affiche le meilleur score a l'ecran
+configurationBoutonScore()
+
 
 racine.bind("<Up>", lambda event: changementDirection([-1, 0]))
 racine.bind("<Right>", lambda event: changementDirection([0, 1]))
