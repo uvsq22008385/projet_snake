@@ -23,7 +23,7 @@ import copy
 # Variables globales
 
 # position initiale du serpent
-serpent = [[1, 2], [1, 1], [2, 1]]
+serpent = [[20, 20], [20, 19], [20, 18][20, 17]]
 
 # direction initiale du serpent
 direction = [0, 1]
@@ -185,7 +185,7 @@ def game_loose():
     # on efface les dessins sur le canvas
     canvas.delete("all")
 
-    tableau, dessin = quadrillage(17, 17)
+    tableau, dessin = quadrillage(40,40)
 
     configurationBoutonScore()
 
@@ -216,7 +216,7 @@ def move():
         else:
             tableau[A][B] = 3
 
-            canvas.itemconfigure(dessin[A][B], fill="red")
+            canvas.itemconfigure(dessin[A][B], fill="green")
 
         # si le serpent se touche lui-même
         for element in serpent:
@@ -238,7 +238,7 @@ def move():
                 fruit = creation_fruit(nmur-1, mmur-1)
                 tableau[fruit[0]][fruit[1]] = 5
 
-                canvas.itemconfigure(dessin[fruit[0]][fruit[1]], fill="yellow")
+                canvas.itemconfigure(dessin[fruit[0]][fruit[1]], fill="red")
 
             else:
                 a = serpent[-1][0]
@@ -249,7 +249,7 @@ def move():
                 # l'anciene position de la queue du serpent redevient du terrain
                 tableau[a][b] = 1
 
-                canvas.itemconfigure(dessin[a][b], fill="pink")
+                canvas.itemconfigure(dessin[a][b], fill="saddlebrown")
 
                 serpent[0] = copy.deepcopy([A, B])
 
@@ -287,8 +287,8 @@ def quadrillage(n, m):
 
             tableau[i].append(k)
 
-            taille_case_x = 500/n
-            taille_case_y = 500/m
+            taille_case_x = 602/n
+            taille_case_y = 602/m
 
             x0 = a * taille_case_x
             y0 = i * taille_case_y
@@ -296,13 +296,13 @@ def quadrillage(n, m):
             y1 = (i + 1) * taille_case_y
 
             if k == 1:
-                color = "pink"
+                color = "saddlebrown"
             elif k == 3:
-                color = "red"
+                color = "forestgreen"
             elif k == 5:
-                color = "yellow"
+                color = "red"
             elif k == 0:
-                color = "blue"
+                color = "navy"
 
             dessin[i].append(canvas.create_rectangle((x0, y0), (x1, y1), fill=color))
 
@@ -320,18 +320,22 @@ def afficher_tableau(tableau):
 ####################
 # Programme principale
 
-racine = tk.Tk()
+#On créer une fenêtre grâce à la fonction tk.Tk()
 
-canvas = tk.Canvas(racine, width=500, height=500, bg="white")
+racine = tk.Tk()
+#On change le titre de la fenêtre
+racine.title("Snake game")
+
+canvas = tk.Canvas(racine, width=600, height=600, bg="navy")
 canvas.grid()
 
 # affiche le score actuelle
-label = tk.Label(racine, text="score:0")
+label = tk.Label(racine, text="score:0 High-Score:0")
 label.grid()
 
 
 # renvoie le tableau sous forme de nom et les dessins du canavas
-tableau, dessin = quadrillage(17, 17)
+tableau, dessin = quadrillage(40, 40)
 
 # pour afficher le tableau de nombres dans le terminal
 # afficher_tableau(tableau)
