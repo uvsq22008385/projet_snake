@@ -1,3 +1,4 @@
+
 ###############################
 # nom du projet: snake
 # groupe de td: 5
@@ -23,7 +24,7 @@ import copy
 # Variables globales
 
 # position initiale du serpent
-serpent = [[1, 2], [1, 1], [2, 1]]
+serpent = [[20, 20], [20, 19], [20, 18], [20, 17]]
 
 # direction initiale du serpent
 direction = [0, 1]
@@ -44,51 +45,6 @@ vitesse = 200  # vitesse actuelle du snake, vitesse: moyenne
 
 #####################
 # Fonctions principales
-def configurationBoutonScore():
-    '''affiche la valeur du meilleur score à l'écran'''
-    chose = best_score()
-    scorea.configure(text=chose)
-
-
-def read():
-    '''lis l'ensemble des scores obtenus par le joueur'''
-
-    fic_rd = open("fichier", "r")
-
-    line = [str(score)] + fic_rd.readlines()
-
-    for a in range(len(line)):
-        line[a] = line[a].replace("\n", "")
-
-    fic_rd.close()
-
-    return line
-
-
-def best_score():
-    '''recupere le meilleur score parmi les différents score du joueur'''
-    line = read()
-
-    chose = 0
-
-    for i in range(len(line)):
-        if int(line[i]) > chose:
-            chose = int(line[i])
-
-    return chose
-
-
-def write(score):
-    '''enregistre les différents score du joueur'''
-
-    line = [str(score)] + read()
-
-    fic_wr = open("fichier", "w")
-
-    for element in line:
-        fic_wr.write(element + "\n")
-
-    fic_wr.close()
 
 
 def changementVitesse(vit):
@@ -165,13 +121,11 @@ def game_loose():
     bouton.configure(text="recommencer")
     label.configure(text="Vous avez perdu, votre score est:"+str(score))
 
-    # on enregistre le score dans un fichier text
-
-    write(score)
+  
 
     # variable a reset
 
-    serpent = [[1, 2], [1, 1], [2, 1]]
+    serpent = [[20, 20], [20, 19], [20, 18], [20, 17]]
 
     direction = [0, 1]
 
@@ -185,7 +139,7 @@ def game_loose():
     # on efface les dessins sur le canvas
     canvas.delete("all")
 
-    tableau, dessin = quadrillage(17, 17)
+    tableau, dessin = quadrillage(40, 40)
 
     configurationBoutonScore()
 
@@ -216,7 +170,7 @@ def move():
         else:
             tableau[A][B] = 3
 
-            canvas.itemconfigure(dessin[A][B], fill="red")
+            canvas.itemconfigure(dessin[A][B], fill="forestgreen")
 
         # si le serpent se touche lui-même
         for element in serpent:
@@ -238,7 +192,7 @@ def move():
                 fruit = creation_fruit(nmur-1, mmur-1)
                 tableau[fruit[0]][fruit[1]] = 5
 
-                canvas.itemconfigure(dessin[fruit[0]][fruit[1]], fill="yellow")
+                canvas.itemconfigure(dessin[fruit[0]][fruit[1]], fill="red")
 
             else:
                 a = serpent[-1][0]
@@ -249,7 +203,7 @@ def move():
                 # l'anciene position de la queue du serpent redevient du terrain
                 tableau[a][b] = 1
 
-                canvas.itemconfigure(dessin[a][b], fill="pink")
+                canvas.itemconfigure(dessin[a][b], fill="saddlebrown")
 
                 serpent[0] = copy.deepcopy([A, B])
 
@@ -287,8 +241,8 @@ def quadrillage(n, m):
 
             tableau[i].append(k)
 
-            taille_case_x = 500/n
-            taille_case_y = 500/m
+            taille_case_x = 530/n
+            taille_case_y = 530/m
 
             x0 = a * taille_case_x
             y0 = i * taille_case_y
@@ -296,13 +250,13 @@ def quadrillage(n, m):
             y1 = (i + 1) * taille_case_y
 
             if k == 1:
-                color = "pink"
+                color = "saddlebrown"
             elif k == 3:
-                color = "red"
+                color = "forestgreen"
             elif k == 5:
-                color = "yellow"
+                color = "red"
             elif k == 0:
-                color = "blue"
+                color = "navy"
 
             dessin[i].append(canvas.create_rectangle((x0, y0), (x1, y1), fill=color))
 
@@ -321,29 +275,34 @@ def afficher_tableau(tableau):
 # Programme principale
 
 racine = tk.Tk()
+racine.title("Snake game")
 
-canvas = tk.Canvas(racine, width=500, height=500, bg="white")
+
+canvas = tk.Canvas(racine, width=530, height=530, bg="saddlebrown")
 canvas.grid()
 
 # affiche le score actuelle
-label = tk.Label(racine, text="score:0")
+label = tk.Label(racine, text="score:0 High Score:0")
 label.grid()
 
 
-# renvoie le tableau sous forme de nom et les dessins du canavas
-tableau, dessin = quadrillage(17, 17)
+# renvoie le tableau sous forme de nom et les dessins du canavas
+tableau, dessin = quadrillage(40, 40)
 
 # pour afficher le tableau de nombres dans le terminal
 # afficher_tableau(tableau)
 
+
+
 bouton = tk.Button(racine, text="démarrer", command=lambda: pause())
 bouton.grid()
-
 
 haut = tk.Button(racine, text="^", command=lambda: changementDirection([-1, 0])).grid()
 droite = tk.Button(racine, text=">", command=lambda: changementDirection([0, 1])).grid()
 bas = tk.Button(racine, text="v", command=lambda: changementDirection([1, 0])).grid()
 gauche = tk.Button(racine, text="<", command=lambda: changementDirection([0, -1])).grid()
+
+
 
 lent = tk.Button(racine, text="lent", command=lambda: changementVitesse(500))
 lent.grid()
@@ -366,8 +325,6 @@ titre.grid()
 scorea = tk.Label(racine, text="")
 scorea.grid()
 
-# intialisation affiche le meilleur score a l'ecran
-configurationBoutonScore()
 
 
 racine.bind("<Up>", lambda event: changementDirection([-1, 0]))
